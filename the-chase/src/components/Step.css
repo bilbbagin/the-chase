@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto+Condensed:wght@700&family=Roboto+Mono:wght@500&display=swap');
+
+body {
+  background-color: #222736;
+}
+
+.trapezoid {
+  height: 80px;
+  border: 1px solid rgb(80, 212, 204);
+}
+
+.trapezoid::before {
+  content: '';
+  display: block;
+  padding-top: 50%; /* Controls the aspect ratio of the image */
+}
+
+.trapezoid img {
+  position: relative;
+  width: 100%;
+  height: 130%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.trapezoid-text {
+  position: absolute;
+  font-family: 'BebasNeueRegular', sans-serif;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+}
