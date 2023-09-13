@@ -45,7 +45,7 @@ function Step({ text, photoURL, dimensions, name }: IStepProps) {
         if (photoURL)
           return (
             <div>
-              <img src={photoURL} alt="Your Image" />
+              <img width={150} height={150} className="rounded-circle" alt="avatar1" src={photoURL} />
             </div>
           );
       }

@@ -5,22 +5,15 @@ interface Props {
   answers: string[];
   handleClick: (idx: number) => void;
   ansClickSettings?: { ansIdx?: number; color?: string };
-  correctAnsIdx?: number;
 }
 
-const Answers: React.FC<Props> = ({
-  answers,
-  handleClick,
-  ansClickSettings,
-  correctAnsIdx,
-}: Props) => {
+const Answers: React.FC<Props> = ({ answers, handleClick, ansClickSettings }: Props) => {
   return (
     <div className="grid gap-3 d-flex">
       {answers.map((answer, idx) => {
         const isSelected = ansClickSettings?.ansIdx === idx;
         const borderColorClass =
           isSelected && ansClickSettings?.color ? `border-${ansClickSettings.color}` : '';
-
         const btnStyle: React.CSSProperties = {
           width: '100%',
           minWidth: '220px',
@@ -34,8 +27,8 @@ const Answers: React.FC<Props> = ({
           <div key={idx} style={{ width: '100%' }}>
             <Button
               onClick={() => handleClick(idx)}
-              className={`border ${borderColorClass}`}
-              variant={correctAnsIdx ? 'success' : 'dark'}
+              className={`border ${borderColorClass} fw-bold`}
+              variant={answers.length == 2 ? (idx == 0 ? 'success' : 'danger') : 'dark'}
               style={btnStyle}
             >
               {answer}

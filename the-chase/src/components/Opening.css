@@ -1,0 +1,74 @@
+/* In your CSS file */
+body {
+  /* background-image: url('../src/chase_logo.png');  */
+  background-size: contain; /* Scale the image to fit within the screen without cropping */
+  background-position: center center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* In your ImageAnimation.css file */
+.animation-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+}
+
+.animate-left {
+  position: absolute;
+  animation: slide-right 2s ease-in-out forwards;
+  top: 30%;
+  left: 88%;
+  width: 320px;
+}
+
+.animate-right {
+  position: absolute;
+  animation: slide-right 2s ease-in-out forwards;
+  top: 70%;
+  left: 20%;
+  height: 200px;
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* In your Opening.css file or external stylesheet */
+.button-container {
+  position: absolute;
+  top: 34.5%; /* Adjust the top position as needed */
+  left: 80.3%; /* Adjust the left position as needed */
+  width: 2%;
+}
+
+.start-btn {
+  color: #000000;
+  background-color: #000000;
+  border: none;
+  transition: none;
+}
+
+.custom-button:hover {
+	color: #000000; /* Set the text color to the same color as the normal state */
+  }

@@ -1,0 +1,37 @@
+.fill-blue {
+  background: linear-gradient(to left, #1c0dc3, #1c2096); /* Adjust the colors as needed */
+  color: #fff;
+  border: 4px solid rgb(7, 7, 15);
+  padding: 10px;
+}
+
+.fill-red {
+	background: linear-gradient(to left, #9d0505, #670d0d); /* Adjust the colors as needed */
+	color: #fff;
+	border: 4px solid rgb(7, 7, 15);
+	padding: 10px;
+  }
+
+.fill-green {
+	background: linear-gradient(to left, #15542e, rgb(17, 87, 12)); /* Adjust the colors as needed */
+	color: #fff;
+	border: 4px solid rgb(7, 7, 15);
+	padding: 10px;
+  }
+
+.white-border {
+	background: white;
+	color: #fff;
+	border: 4px solid rgb(7, 7, 15);
+	padding: 10px;
+  }
+
+.custom-container {
+  width: 800px; /* Adjust the percentage as needed */
+  margin: 0 auto; /* Center the container horizontally */
+}
+
+.text-dark {
+	font-size: 50px; /* Adjust the font size as needed */
+	font-weight: 800;
+  }

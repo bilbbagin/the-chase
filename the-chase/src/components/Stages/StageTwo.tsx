@@ -1,76 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Answers from '../Answers';
+import AnswersGrid from '../AnswersGrid';
 import Question from '../Question';
+import Timer from '../Timer';
 import Title from '../Title';
-import { questionsDB } from '../utils';
+import { booleanQuestions, formatCurrency } from '../utils';
 
-const StageTwo: React.FC = () => {
-  const [questionIdx, setQuestionIndex] = useState(0);
-  const [currTurn, setCurrTurn] = useState("Player 1's turn");
-  const [player1Answers, setPlayer1Answers] = useState<string[]>([]);
-  const [player2Answers, setPlayer2Answers] = useState<string[]>([]);
-  const [answered, setAnswered] = useState<{ player1: boolean; player2: boolean }>({
-    player1: false,
-    player2: false,
-  });
-  const [winner, setWinner] = useState<string | null>(null);
+const CHASER_PHOTO = '../src/dudi_chaser.PNG';
+const CYBER_PHOTO = '../src/Lahav_433_Logo.png';
+const START_TIME = 120;
 
-  const onSelectAns = (idx: number, player?: number): void => {
-    const selectedAnswer = questionsDB[questionIdx].answers[idx];
+interface Props {
+  totalMoney: number;
+  numPlayersThrough: number;
+  setNumPlayersAnswers: (param: number) => void;
+  setNumChaserAnswers: (param: number) => void;
+  setStageTwoRunning: (param: boolean) => void;
+}
 
-    if (player === 1) {
-      setPlayer1Answers((prevAnswers) => [...prevAnswers, selectedAnswer]);
-      setAnswered((prev) => ({ ...prev, player1: true }));
-    } else if (player === 2) {
-      setPlayer2Answers((prevAnswers) => [...prevAnswers, selectedAnswer]);
-      setAnswered((prev) => ({ ...prev, player2: true }));
-    }
+const StageTwo: React.FC<Props> = ({
+  totalMoney,
+  numPlayersThrough,
+  setNumPlayersAnswers,
+  setNumChaserAnswers,
+  setStageTwoRunning,
+}: Props) => {
+  const [turn, setTurn] = useState<0 | 1>(0);
+  const [turnFinished, setTurnFinished] = useState<boolean>(false);
+  const [time, setTime] = useState(START_TIME);
+  const [questionIdx, setQuestionIndex] = useState<number>(0);
+  const [answer, setAnswer] = useState<number>();
+  const [haveAnswered, setHaveAnswered] = useState<boolean>(false);
+  const [numCorrectAnswers, setNumCorrectAnswers] = useState(numPlayersThrough);
+  const [numPlayerCorrectAnswers, setNumPlayerCorrectAnswers] = useState(numPlayersThrough);
+  const photo = turn == 0 ? CYBER_PHOTO : CHASER_PHOTO;
 
-    if (answered.player1 && answered.player2) {
-      determineWinner();
-      setTimeout(() => {
-        setAnswered({ player1: false, player2: false });
-        setWinner(null);
-
-        if (questionIdx + 1 < questionsDB.length) {
-          setQuestionIndex(questionIdx + 1);
-        }
-      }, 1500);
-    }
-  };
-
-  const determineWinner = (): void => {
-    const player1Answer = player1Answers[player1Answers.length - 1];
-    const player2Answer = player2Answers[player2Answers.length - 1];
-    const correctAnswer = questionsDB[questionIdx].correctAnswer;
-
-    if (player1Answer === player2Answer) {
-      setWinner("It's a tie!");
-    } else if (player1Answer === correctAnswer) {
-      setWinner('Player 1 wins!');
-    } else if (player2Answer === correctAnswer) {
-      setWinner('Player 2 wins!');
-    }
+  const onSelectAns = (idx: number): void => {
+    setAnswer(idx);
+    setHaveAnswered(true);
   };
 
   useEffect(() => {
-    setPlayer1Answers([]);
-    setPlayer2Answers([]);
-  }, [questionIdx]);
+    if (!turnFinished) return;
+    if (turn == 0) {
+      setTurn(1);
+      setNumPlayersAnswers(numCorrectAnswers);
+      setNumPlayerCorrectAnswers(numCorrectAnswers);
+      setNumCorrectAnswers(0);
+      setTime(START_TIME);
+      setTurnFinished(false);
+    } else {
+      setNumChaserAnswers(numCorrectAnswers);
+      setStageTwoRunning(false);
+    }
+  }, [turnFinished]);
+
+  useEffect(() => {
+    if (!haveAnswered) return;
+    if (answer == 0) {
+      if (turn == 1 && numCorrectAnswers == numPlayerCorrectAnswers - 1) {
+        setNumChaserAnswers(numCorrectAnswers + 1);
+        setStageTwoRunning(false);
+      }
+      setNumCorrectAnswers((prev) => prev + 1);
+      if (turn == 0) setNumPlayerCorrectAnswers((prev) => prev + 1);
+    }
+
+    setHaveAnswered(false);
+
+    if (questionIdx < booleanQuestions.length - 1) {
+      setQuestionIndex((prev) => prev + 1);
+    }
+  }, [haveAnswered]);
 
   return (
     <>
-      <Title content={currTurn} size={4} />
-      <Question question={questionsDB[questionIdx].question} key={questionIdx} />
-      <Answers
-        answers={questionsDB[questionIdx].answers}
-        handleClick={(idx, player) => onSelectAns(idx, player)}
-        ansClickSettings={{
-          idx: answered.player1 ? player1Answers.length - 1 : -1,
-          player: answered.player2 ? player2Answers.length - 1 : -1,
-        }}
-      />
-      {winner && <p>Winner: {winner}</p>}
+      <div className="container">
+        <Title size={1} content={`₪${formatCurrency(totalMoney)}`} />
+        <div className="row d-flex justify-content-center align-items-center">
+          <div className="col-md-6">
+            <img width={150} height={150} className="rounded-circle" alt="avatar1" src={photo} />
+          </div>
+          <div className="row d-flex justify-content-center align-items-center">
+            <div className="col pb-5">
+              <Timer key={turn} expiryTimestamp={time} setTurnFinished={setTurnFinished} />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="p-3">
+        <AnswersGrid
+          key={0}
+          numCorrectAnswers={numPlayerCorrectAnswers}
+          competitor={"players"}
+        />
+      </div>
+      {turn == 1 && (
+        <div className="p-3">
+          <AnswersGrid key={1} numCorrectAnswers={numCorrectAnswers} competitor={'chaser'} />
+        </div>
+      )}
+      <div className="container">
+        <div className="row flex-row-reverse d-flex justify-content-center align-items-center">
+          <div className="col-md-6">
+            {/* <Title size={1} content={`₪${formatCurrency(player1Money)}`} /> */}
+            <div className="d-flex justify-content-center">
+              <div className="pb-5">
+                <Question question={booleanQuestions[questionIdx]} key={questionIdx} />
+                <Answers answers={['נכון', 'לא נכון']} handleClick={onSelectAns} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
